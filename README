@@ -1,3 +1,4 @@
 (map (+ 1 _) (list 1 2 3))
 (map (- 1 _) (list 1 2 3))
 (map (- _ 1) (list 1 2 3))
+(map (- _ _) (list 10 20 30) (list 1 2 3)) ;; => (list 9 18 27)
