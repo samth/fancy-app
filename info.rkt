@@ -4,7 +4,8 @@
 (define scribblings
   '(("main.scrbl" () (library) "fancy-app")))
 
-(define deps '("base"))
+(define deps
+  '(["base" #:version "6.4"]))
 
 (define build-deps
   '("rackunit-lib"
