@@ -5,5 +5,6 @@
   '(("main.scrbl" () (library) "fancy-app")))
 (define deps '("base"))
 (define build-deps
-  '("racket-doc"
+  '("rackunit-lib"
+    "racket-doc"
     "scribble-lib"))
