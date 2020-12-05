@@ -4,7 +4,6 @@
 (require syntax/parse/define
          (for-syntax racket/base
                      racket/syntax
-                     syntax/parse/experimental/template
                      syntax/stx))
 
 (begin-for-syntax
@@ -24,11 +23,12 @@
 
 (define-syntax-parser @#%app
   [(_ f:expr a:arg ...+)
-   #:when (not (stx-null? (template ((?? a.id) ...))))
-   (make-tooltip (template (λ ((?@ (?? a.id) ...)) (#%app f (?? a.id a) ...)))
+   #:when (not (stx-null? #'((~? a.id) ...)))
+   #:with lambda-body-expr (syntax/loc this-syntax (#%app f (~? a.id a) ...))
+   (make-tooltip #'(λ ((~@ (~? a.id) ...)) lambda-body-expr)
                  this-syntax
                  "this application is automatically a function using _")]
-  [(_ f:expr e ...) #'(#%app f e ...)])
+  [(_ f:expr e ...) (syntax/loc this-syntax (#%app f e ...))])
 
 (module+ test
   (require rackunit)
