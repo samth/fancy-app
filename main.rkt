@@ -22,9 +22,9 @@
     (pattern _ #:attr id #f)))
 
 (define-syntax-parser @#%app
-  [(_ f:expr a:arg ...+)
+  [(_ a:arg ...+)
    #:when (not (stx-null? #'((~? a.id) ...)))
-   #:with lambda-body-expr (syntax/loc this-syntax (#%app f (~? a.id a) ...))
+   #:with lambda-body-expr (syntax/loc this-syntax (#%app (~? a.id a) ...))
    (make-tooltip #'(λ ((~@ (~? a.id) ...)) lambda-body-expr)
                  this-syntax
                  "this application is automatically a function using _")]
@@ -34,9 +34,11 @@
   (require rackunit)
   (define (f . xs) xs)
   (check-equal? (@#%app (@#%app f _ 1 _ _ 4) 0 2 3) '(0 1 2 3 4))
+  (check-equal? (@#%app (@#%app _ _ 1 _ _ 4) f 0 2 3) '(0 1 2 3 4))
   (check-equal? (@#%app list 1 2 3) '(1 2 3))
   (define (g x #:y y) (- x y))
   (check-equal? (@#%app (@#%app g #:y 10 _) 100) 90)
   (check-equal? (@#%app (@#%app g _ #:y 10) 100) 90)
   (define (h) 1)
-  (check-equal? (@#%app h) 1))
+  (check-equal? (@#%app h) 1)
+  (check-equal? ((@#%app _) h) 1))
